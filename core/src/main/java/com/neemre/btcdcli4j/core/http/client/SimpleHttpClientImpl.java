@@ -39,7 +39,7 @@ public class SimpleHttpClientImpl implements SimpleHttpClient {
 
 
 	public SimpleHttpClientImpl(CloseableHttpClient provider, Properties nodeConfig) {
-		LOG.info("** SimpleHttpClientImpl(): initiating the HTTP communication layer");
+		LOG.debug("** SimpleHttpClientImpl(): initiating the HTTP communication layer");
 		this.provider = provider;
 		this.nodeConfig = nodeConfig;
 	}
@@ -84,7 +84,7 @@ public class SimpleHttpClientImpl implements SimpleHttpClient {
 	@Override
 	public void close() {
 		try {
-			LOG.info(">> close(..): attempting to shut down the underlying HTTP provider");
+			LOG.debug(">> close(..): attempting to shut down the underlying HTTP provider");
 			provider.close();
 		} catch (IOException e) {
 			LOG.warn("<< close(..): failed to shut down the underlying HTTP provider, message was: "

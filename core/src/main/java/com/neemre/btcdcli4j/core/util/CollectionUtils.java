@@ -19,7 +19,9 @@ public final class CollectionUtils {
 	public static List<Object> asList(Object... items) {
 		List<Object> itemsList = new ArrayList<Object>(items.length);
 		for (Object item : items) {
-			itemsList.add(item);
+			if (item != null) {
+				itemsList.add(item);
+			}
 		}
 		return itemsList;
 	}

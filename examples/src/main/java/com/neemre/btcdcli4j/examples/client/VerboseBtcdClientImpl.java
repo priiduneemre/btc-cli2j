@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.neemre.btcdcli4j.core.domain.EstimateFee;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import com.neemre.btcdcli4j.core.BitcoindException;
@@ -104,9 +105,9 @@ public class VerboseBtcdClientImpl extends BtcdClientImpl {
 	}
 
 	@Override
-	public RawTransactionOverview decodeRawTransaction(String hexTransaction) throws BitcoindException,
+	public RawTransactionOverview decodeRawTransaction(String hexTransaction, Boolean isWitness) throws BitcoindException,
 			CommunicationException {
-		RawTransactionOverview rawTransaction = super.decodeRawTransaction(hexTransaction);
+		RawTransactionOverview rawTransaction = super.decodeRawTransaction(hexTransaction, isWitness);
 		printResult(Commands.DECODE_RAW_TRANSACTION.getName(), new String[]{"hexTransaction"},
 				new Object[]{hexTransaction}, rawTransaction);
 		return rawTransaction;
@@ -145,10 +146,10 @@ public class VerboseBtcdClientImpl extends BtcdClientImpl {
 	}	
 
 	@Override
-	public BigDecimal estimateFee(Integer maxBlocks) throws BitcoindException, CommunicationException {
-		BigDecimal estimatedFee = super.estimateFee(maxBlocks);
-		printResult(Commands.ESTIMATE_FEE.getName(), new String[]{"maxBlocks"}, 
-				new Object[]{maxBlocks}, estimatedFee);
+	public BigDecimal estimateSmartFee(Integer maxBlocks, EstimateFee.Mode mode) throws BitcoindException, CommunicationException {
+		BigDecimal estimatedFee = super.estimateSmartFee(maxBlocks, mode);
+		printResult(Commands.ESTIMATE_SMART_FEE.getName(), new String[]{"maxBlocks", "estimateMode"},
+				new Object[]{maxBlocks, mode}, estimatedFee);
 		return estimatedFee;
 	}
 

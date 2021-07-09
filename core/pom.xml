@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.neemre.btcd-cli4j</groupId>
+		<groupId>com.github.bitsoex.btcd-cli4j</groupId>
 		<artifactId>btcd-cli4j-parent</artifactId>
-		<version>0.5.8</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>btcd-cli4j-core</artifactId>
 	<packaging>jar</packaging>

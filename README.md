@@ -31,6 +31,16 @@ Other dependencies:
 * Simple Logging Facade for Java 1.7.10 [[link]](http://www.slf4j.org/)
 * Apache Commons Lang 3.3.2 [[link]](http://commons.apache.org/proper/commons-lang/)
 
+##Publishing locally for testing<a name="publish-local"></a>
+
+If you want to test locally (i.e. not checking in changes to github and doing a jitpack release), run `mvn install`, which will publish jars to your local maven repo as such:
+  "com.github.bitsoex.btcd-cli4j:btcd-cli4j-core:1.0-SNAPSHOT"
+
+In your code depending upon this library, change your dependency to this snapshot version.  You might need to instruct your gradle to search your local maven, so add this to your build.gradle file:
+
+repositories {
+        mavenLocal()
+}
 
 ##Getting started <a name="getting-started"></a>
 

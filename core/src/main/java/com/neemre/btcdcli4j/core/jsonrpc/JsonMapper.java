@@ -29,7 +29,7 @@ public class JsonMapper {
 
 
 	public JsonMapper() {
-		LOG.info("** JsonMapper(): initiating & configuring external JSON processor (Jackson"
+		LOG.debug("** JsonMapper(): initiating & configuring external JSON processor (Jackson"
 				+ " ObjectMapper)");
 		rawMapper = new ObjectMapper();
 		rawWriter = rawMapper.writer();

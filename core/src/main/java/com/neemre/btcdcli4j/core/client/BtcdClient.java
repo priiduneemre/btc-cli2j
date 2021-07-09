@@ -15,6 +15,7 @@ import com.neemre.btcdcli4j.core.domain.AddressInfo;
 import com.neemre.btcdcli4j.core.domain.AddressOverview;
 import com.neemre.btcdcli4j.core.domain.Block;
 import com.neemre.btcdcli4j.core.domain.BlockChainInfo;
+import com.neemre.btcdcli4j.core.domain.EstimateFee;
 import com.neemre.btcdcli4j.core.domain.Info;
 import com.neemre.btcdcli4j.core.domain.MemPoolInfo;
 import com.neemre.btcdcli4j.core.domain.MiningInfo;
@@ -51,8 +52,19 @@ public interface BtcdClient {
 
 	String createRawTransaction(List<OutputOverview> outputs, Map<String, BigDecimal> toAddresses) 
 			throws BitcoindException, CommunicationException;
-
-	RawTransactionOverview decodeRawTransaction(String hexTransaction) throws BitcoindException, 
+	/**
+	 *
+	 * @param hexTransaction
+	 * @param isWitness If using bitcoind before 0.16, always pass null
+	 *                  If using bitcoind 0.16 or greater, this is an optional parameter that controls 3 separate behaviors
+	 *                  If true, then can be used for "any real, fully valid, or on-chain transaction...even coinbase transaction." (see https://github.com/bitcoin/bitcoin/issues/12989)
+	 *                  If false, then used for "the case of decoding partial not-fully-signed transactions"
+	 *                  if blank, then "heuristics will be used to determine which is the most reasonable interpretation."
+	 * @return
+	 * @throws BitcoindException
+	 * @throws CommunicationException
+	 */
+	RawTransactionOverview decodeRawTransaction(String hexTransaction, Boolean isWitness) throws BitcoindException,
 			CommunicationException;
 
 	RedeemScript decodeScript(String hexRedeemScript) throws BitcoindException, 
@@ -64,7 +76,16 @@ public interface BtcdClient {
 
 	String encryptWallet(String passphrase) throws BitcoindException, CommunicationException;
 
-	BigDecimal estimateFee(Integer maxBlocks) throws BitcoindException, CommunicationException;
+	/**
+	 * See https://developer.bitcoin.org/reference/rpc/estimatesmartfee.html
+	 * @param maxBlocks Confirmation target in blocks (1 - 1008)
+	 * @param mode Which mode to use.  Note that default is CONSERVATIVE
+	 *
+	 * @return
+	 * @throws BitcoindException
+	 * @throws CommunicationException
+	 */
+	BigDecimal estimateSmartFee(Integer maxBlocks, EstimateFee.Mode mode) throws BitcoindException, CommunicationException;
 
 	BigDecimal estimatePriority(Integer maxBlocks) throws BitcoindException, CommunicationException;
 

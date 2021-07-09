@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.neemre.btcdcli4j.core.domain.EstimateFee;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ public class BtcdClientImpl implements BtcdClient {
 		initialize();
 		rpcClient = new JsonRpcClientImpl(configurator.checkHttpProvider(httpProvider), 
 				configurator.checkNodeConfig(nodeConfig));
-		configurator.checkNodeVersion(getInfo().getVersion());
+		configurator.checkNodeVersion(getNetworkInfo().getVersion());
 		configurator.checkNodeHealth((Block)getBlock(getBestBlockHash(), true));
 	}
 
@@ -167,10 +168,15 @@ public class BtcdClientImpl implements BtcdClient {
 	}
 
 	@Override
-	public RawTransactionOverview decodeRawTransaction(String hexTransaction) 
+	public RawTransactionOverview decodeRawTransaction(String hexTransaction, Boolean isWitness)
 			throws BitcoindException, CommunicationException {
-		String rawTransactionJson = rpcClient.execute(Commands.DECODE_RAW_TRANSACTION.getName(), 
-				hexTransaction);
+		List<Object> params = new ArrayList<>(2);
+		params.add(hexTransaction);
+		if (isWitness != null) {  //Treat as optional - so if null, don't pass anything in
+			params.add(isWitness);
+		}
+		String rawTransactionJson = rpcClient.execute(Commands.DECODE_RAW_TRANSACTION.getName(),
+				params);
 		RawTransactionOverview rawTransaction = rpcClient.getMapper().mapToEntity(
 				rawTransactionJson, RawTransactionOverview.class);
 		return rawTransaction;
@@ -208,11 +214,12 @@ public class BtcdClientImpl implements BtcdClient {
 	}
 
 	@Override
-	public BigDecimal estimateFee(Integer maxBlocks) throws BitcoindException, 
+	public BigDecimal estimateSmartFee(Integer maxBlocks, EstimateFee.Mode mode) throws BitcoindException,
 			CommunicationException {
-		String estimatedFeeJson = rpcClient.execute(Commands.ESTIMATE_FEE.getName(), maxBlocks);
-		BigDecimal estimatedFee = rpcClient.getParser().parseBigDecimal(estimatedFeeJson);
-		return estimatedFee;
+		List<Object> params = CollectionUtils.asList(maxBlocks, mode);
+		String estimatedFeeJson = rpcClient.execute(Commands.ESTIMATE_SMART_FEE.getName(), params);
+		EstimateFee estimateFee = rpcClient.getMapper().mapToEntity(estimatedFeeJson, EstimateFee.class);
+		return estimateFee.getFeeRate();
 	}
 
 	@Override
@@ -1255,12 +1262,12 @@ public class BtcdClientImpl implements BtcdClient {
 
 	@Override
 	public synchronized void close() {
-		LOG.info(">> close(..): closing the 'bitcoind' core wrapper");
+		LOG.debug(">> close(..): closing the 'bitcoind' core wrapper");
 		rpcClient.close();
 	}
 
 	private void initialize() {
-		LOG.info(">> initialize(..): initiating the 'bitcoind' core wrapper");
+		LOG.debug(">> initialize(..): initiating the 'bitcoind' core wrapper");
 		configurator = new ClientConfigurator();
 	}
 }

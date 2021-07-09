@@ -78,7 +78,12 @@ public class ClientConfigurator extends AgentConfigurator {
 		if (extendedFormat == null) {
 			throw new IllegalArgumentException(Errors.ARGS_NULL.getDescription());
 		}
-		String canonicalFormat = StringUtils.pad(extendedFormat.toString(), 8, '0', true);
+		//For BSV, see https://github.com/bitcoin-sv/bitcoin-sv/commit/e5fea685078e03686eb1374a02ed426de3276ac7#diff-08d3e61a9518c8b4a92c2459a76baee6
+		String szExtendedFormat = extendedFormat.toString();
+		if (szExtendedFormat.length() == 9 && szExtendedFormat.startsWith("1")){
+			szExtendedFormat = szExtendedFormat.substring(1);
+		}
+		String canonicalFormat = StringUtils.pad(szExtendedFormat, 8, '0', true);
 		List<String> splittedFormat = StringUtils.split(canonicalFormat, 2);
 		splittedFormat = StringUtils.replaceAll(splittedFormat, "^0", "");
 		List<Object> separatedFormat = CollectionUtils.mergeInterlaced(splittedFormat, 
